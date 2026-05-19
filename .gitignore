@@ -1,0 +1,11 @@
+*.local
+.mypy_cache
+
+**/secrets.md
+**/.env
+**/.cowork/**
+**/.claude/logs/work/**
+**/.claude/logs/deploy/**
+**/.claude/settings.*.json
+
+skills/sa-*/

@@ -1,0 +1,142 @@
+{
+    "$schema": "https://json.schemastore.org/claude-code-settings.json",
+    "cleanupPeriodDays": 14,
+    "env": {
+        "MAX_MCP_OUTPUT_TOKENS": "50000",
+        "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    },
+    "attribution": {
+        "commit": "",
+        "pr": ""
+    },
+    "permissions": {
+        "allow": [
+            "Read",
+            "Glob",
+            "Grep",
+            "WebFetch",
+            "WebSearch",
+            "Bash(ls*)",
+            "Bash(find *)",
+            "Bash(stat *)",
+            "Bash(wc *)",
+            "Bash(docker *)",
+            "Bash(docker-compose *)",
+            "Bash(npm run *)",
+            "Bash(git status)",
+            "Bash(git diff *)",
+            "Bash(git log *)",
+            "Bash(* --version)",
+            "Bash(* --help)"
+        ],
+        "deny": [
+            "Read(**/.env)",
+            "Read(**/.env.*)",
+            "Read(**/*.env)",
+            "Read(**/*.pem)",
+            "Read(**/*secret*)",
+            "Edit(**/.env)",
+            "Edit(**/.env.*)",
+            "Edit(/.github/workflows/**)",
+            "Bash(git push -f *)",
+            "Bash(git push --force *)",
+            "Bash(git reset --hard *)",
+            "Bash(rm -rf *)",
+            "Bash(curl *)",
+            "Bash(wget *)"
+        ],
+        "ask": [
+            "Write",
+            "Edit",
+            "Bash(git commit*)",
+            "Bash(git push*)",
+            "Bash(npm publish*)",
+            "Bash(wrangler pages deploy*)"
+        ],
+        "defaultMode": "default"
+    },
+    "model": "sonnet",
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash(git add*)",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "git diff --cached --name-only | grep -E '(^|/)\\.env' && echo '🚨 .env をステージしようとしています！' && exit 1 || exit 0"
+                    }
+                ]
+            },
+            {
+                "matcher": "Bash(rm*)",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "echo '⚠️ 削除コマンド検出。5秒後に実行。Ctrl+C で中止。' && sleep 5"
+                    }
+                ]
+            }
+        ],
+        "PostToolUse": [
+            {
+                "matcher": "Edit|Write|Bash(rm *)",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "python3 ~/.claude/scripts/log_work.py"
+                    }
+                ]
+            },
+            {
+                "matcher": "Bash(claude plugin install*)",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "python3 ~/.claude/scripts/add_plugin_to_setup.py"
+                    }
+                ]
+            },
+            {
+                "matcher": "Bash(claude mcp add*)",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "python3 ~/.claude/scripts/add_mcp_to_setup.py"
+                    }
+                ]
+            }
+        ]
+    },
+    "statusLine": {
+        "type": "command",
+        "command": "sh /home/k-taniguchi/.claude/statusline.sh"
+    },
+    "enabledPlugins": {
+        "php-lsp@claude-plugins-official": true,
+        "gopls-lsp@claude-plugins-official": true,
+        "pyright-lsp@claude-plugins-official": true,
+        "frontend-design@claude-plugins-official": true,
+        "playwright@claude-plugins-official": true,
+        "claude-code-setup@claude-plugins-official": true,
+        "codex@openai-codex": true,
+        "security-guidance@claude-plugins-official": true,
+        "commit-commands@claude-plugins-official": true,
+        "feature-dev@claude-plugins-official": true,
+        "code-simplifier@claude-plugins-official": true,
+        "github@claude-plugins-official": true,
+        "figma@claude-plugins-official": true
+    },
+    "extraKnownMarketplaces": {
+        "openai-codex": {
+            "source": {
+                "source": "github",
+                "repo": "openai/codex-plugin-cc"
+            }
+        }
+    },
+    "language": "japanese",
+    "autoUpdatesChannel": "latest",
+    "showTurnDuration": true,
+    "skipAutoPermissionPrompt": true
+}
