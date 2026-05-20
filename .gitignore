@@ -9,3 +9,7 @@
 **/.claude/settings.*.json
 
 skills/sa-*/
+
+.mcp.json
+
+.secret/

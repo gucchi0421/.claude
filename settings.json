@@ -110,7 +110,7 @@
     },
     "statusLine": {
         "type": "command",
-        "command": "sh /home/k-taniguchi/.claude/statusline.sh"
+        "command": "sh ~/.claude/statusline.sh"
     },
     "enabledPlugins": {
         "php-lsp@claude-plugins-official": true,

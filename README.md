@@ -2,6 +2,15 @@
 
 自社の Web 制作・SEO 業務に Claude Code を導入し、専門エージェントの分業・自動化パイプライン・セキュリティ設計を構築した記録。
 
+## 追加予定
+
+- Serena MCP
+https://dev.classmethod.jp/articles/20250804-story-about-how-i-got-stuck-trying-to-add-serena-to-mcp-with-claude/
+
+```sh
+claude mcp add serena -- uvx --from git+https://github.com/oraios/serena serena-mcp-server --context ide-assistant --project $(pwd) --port 32000
+```
+
 ---
 
 ## 目次
