@@ -71,6 +71,22 @@ GSCデータの `pagePath`（例: `/column/3947/`）は `gsc_site_url + pagePath
 - コピー: キャッチコピー × 3案 + ボディコピー
 - リライト: 変更箇所を明示し、理由を添える
 
+## 本文HTMLの固定クラス（必須）
+
+記事本文で使う要素には**必ず以下のクラスを振る**。案件ごとにCSSでスタイルを当てるための共通仕様なので変更禁止。
+
+| 要素 | クラス | HTML例 |
+|---|---|---|
+| 目次 | `article-toc` | `<nav class="article-toc"><ol>...</ol></nav>` |
+| テーブル | `article-table` | `<div class="article-table"><table>...</table></div>` |
+| 箇条書きリスト | `article-list` | `<ul class="article-list"><li>...</li></ul>` |
+| 番号付きリスト | `article-list-ordered` | `<ol class="article-list-ordered"><li>...</li></ol>` |
+| 引用 | `article-quote` | `<blockquote class="article-quote">...</blockquote>` |
+| FAQ | `article-faq` | `<dl class="article-faq"><dt>Q</dt><dd>A</dd></dl>` |
+| 内部リンクカード | `article-link-card` | `<a class="article-link-card" href="絶対URL">...</a>` |
+| 参考リスト | `article-references` | `<ul class="article-references"><li>...</li></ul>` |
+| コールアウト（補足・注意） | `article-callout` | `<div class="article-callout">...</div>` |
+
 ## 記事ファイル出力（必須）
 
 記事執筆後は必ず以下の手順でファイルに書き出す：
