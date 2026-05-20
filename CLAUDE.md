@@ -7,15 +7,15 @@
 
 # Git 規約
 
-@rules/git-workflow.md
+@rules/workflows/git-workflow.md
 
 # セキュリティ
 
-@rules/security.md
+@rules/_core/security.md
 
 # Codex 連携
 
-@rules/codex.md
+@rules/tools/codex.md
 
 # 記事作成のルール
 
