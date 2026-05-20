@@ -23,6 +23,15 @@ SEO ストラテジスト。メインClaude・competitor-analyst の情報を統
 - GSCデータ（クエリ・順位・CTR・表示回数）
 - GA4データ（ページ別セッション・直帰率・CV数）
 
+# 自サイトのページ確認方法
+
+GSCデータに含まれる `pagePath`（例: `/column/3947/`）は `gsc_site_url + pagePath` で本番ページにアクセスできる。
+
+- 自サイトの既存記事の内容確認 → `WebFetch(gsc_site_url + pagePath)`
+- 事業内容・サービスページの確認 → `WebFetch(gsc_site_url + pagePath)`
+- 「弊社の場合〜」などの事例・実績を記事に盛り込む際は**必ずこの方法で事実確認**してから記載する
+- 架空の事例・推測による記述は禁止
+
 # 設定ファイル
 
 プロジェクトルートの `.claude/settings.seo.json` を必ず最初に読む。
