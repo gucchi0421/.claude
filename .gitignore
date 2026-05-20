@@ -13,3 +13,6 @@ skills/sa-*/
 .mcp.json
 
 .secret/
+
+.serena/**
+!.serena/project.yml
