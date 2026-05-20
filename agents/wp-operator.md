@@ -80,23 +80,82 @@ EOF
 - 変更箇所（タイトル / 本文 / メタ情報 / スラッグ）を明示
 - 公開済みページの変更はバックアップ後のみ実施
 
-## 記事公開時のサムネイル生成（必須）
+## 記事投稿時の必須手順（この順番を厳守）
 
-記事を投稿・公開する前に、必ず `generate_thumbnail.py` でアイキャッチを生成してWPに設定する。
+writer が出力した HTML ファイルを WP に投稿する際は、以下を**必ず**この順番で実行する。
+
+### 1. 本文の抽出（HTMLファイルから `<article>` タグ内のみ使う）
+
+HTMLファイル全体をそのまま投稿してはならない。`<article>` タグの中身のみを投稿本文として使う。
 
 ```bash
-# 基本（Pollinations.ai で生成 → WPにアップ＆アイキャッチ設定）
+# <article>...</article> の中身を抽出
+python3 -c "
+from html.parser import HTMLParser
+import sys
+
+class ArticleExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.in_article = False
+        self.depth = 0
+        self.content = []
+    def handle_starttag(self, tag, attrs):
+        if tag == 'article':
+            self.in_article = True
+            self.depth = 1
+            return
+        if self.in_article:
+            self.depth += 1
+            attr_str = ''.join(f' {k}=\"{v}\"' for k,v in attrs if v)
+            self.content.append(f'<{tag}{attr_str}>')
+    def handle_endtag(self, tag):
+        if self.in_article:
+            if tag == 'article':
+                self.depth -= 1
+                if self.depth == 0:
+                    self.in_article = False
+                return
+            self.content.append(f'</{tag}>')
+    def handle_data(self, data):
+        if self.in_article:
+            self.content.append(data)
+
+p = ArticleExtractor()
+p.feed(open(sys.argv[1]).read())
+print(''.join(p.content))
+" {htmlファイルパス}
+```
+
+タイトル・メタディスクリプションは `<title>` / `<meta name="description">` から別途取得してWP側に設定する。
+
+### 2. WP投稿作成
+
+```bash
+wp post create \
+  --post_title="記事タイトル" \
+  --post_content="（上で抽出した本文）" \
+  --post_status=draft \
+  --post_type=post \
+  --porcelain  # post_id を出力させる
+```
+
+### 3. サムネイル生成・アイキャッチ設定
+
+post_id 取得後に必ず実行する。スキップ禁止。
+
+```bash
 python "$(pwd)/.claude/scripts/generate_thumbnail.py" \
   --title "記事タイトル" \
   --category "カテゴリ名" \
-  --post_id {wp投稿ID}
+  --post_id {post_id}
 
-# カテゴリ選択肢: Web制作 / SEO / マーケティング / WordPress / デザイン（それ以外はbusiness professionalになる）
-# --mode pillow でPillow（テキスト画像）に切り替え可
-# --no-upload でWPアップをスキップしてファイル保存のみ
+# カテゴリ選択肢: Web制作 / SEO / マーケティング / WordPress / デザイン
 ```
 
-**実行タイミング**: WP投稿作成後（`wp post create` でpost_idを取得してから）→ サムネイル生成・設定 → 記事公開の順で行う。
+### 4. 記事公開
+
+サムネイル設定の完了を確認してから公開する。
 
 ## 記事公開時のスラッグ指定
 - writer が出力した `{スラッグ}.html` のスラッグ部分をそのまま WP のスラッグに設定する
