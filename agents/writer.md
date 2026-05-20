@@ -7,7 +7,7 @@ description: |
   - メルマガ・SNS投稿文の作成
   - ホワイトペーパー・提案書の文章作成
   - 既存コンテンツのリライト・校正
-tools: Read, Write, Bash, WebSearch, WebFetch
+tools: Read, Write, Bash, WebSearch, WebFetch, mcp__JapaneseTextAnalyzer__*
 ---
 
 # Role
