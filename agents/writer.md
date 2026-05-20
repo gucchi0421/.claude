@@ -110,7 +110,7 @@ GSCデータの `pagePath`（例: `/column/3947/`）は `gsc_site_url + pagePath
 </head>
 <body>
   <article>
-    <!-- 記事本文（見出し・段落をHTMLで） -->
+    <!-- 記事本文（見出し・段落をHTMLで）。wp-operatorがこの<article>内のみをWPに投稿するため、本文は必ずこのタグで囲む -->
   </article>
 </body>
 </html>
