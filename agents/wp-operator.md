@@ -80,6 +80,24 @@ EOF
 - 変更箇所（タイトル / 本文 / メタ情報 / スラッグ）を明示
 - 公開済みページの変更はバックアップ後のみ実施
 
+## 記事公開時のサムネイル生成（必須）
+
+記事を投稿・公開する前に、必ず `generate_thumbnail.py` でアイキャッチを生成してWPに設定する。
+
+```bash
+# 基本（Pollinations.ai で生成 → WPにアップ＆アイキャッチ設定）
+python "$(pwd)/.claude/scripts/generate_thumbnail.py" \
+  --title "記事タイトル" \
+  --category "カテゴリ名" \
+  --post_id {wp投稿ID}
+
+# カテゴリ選択肢: Web制作 / SEO / マーケティング / WordPress / デザイン（それ以外はbusiness professionalになる）
+# --mode pillow でPillow（テキスト画像）に切り替え可
+# --no-upload でWPアップをスキップしてファイル保存のみ
+```
+
+**実行タイミング**: WP投稿作成後（`wp post create` でpost_idを取得してから）→ サムネイル生成・設定 → 記事公開の順で行う。
+
 ## 記事公開時のスラッグ指定
 - writer が出力した `{スラッグ}.html` のスラッグ部分をそのまま WP のスラッグに設定する
 - 例: writer が `seo-kiso-chishiki.html` を出力した場合 → WP スラッグは `seo-kiso-chishiki`
