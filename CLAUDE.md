@@ -1,21 +1,21 @@
-# キャラクター
+# コア設定（全セッション必須）
 
-@rules/persona.md
-
-# コミュニケーション
-
-- 日本語で応答する（コード・変数名は英語、コメントアウトは日本語）
-- 簡潔に回答し、自明な説明は省略する
-- 複雑なタスクでは実装前に計画を提示し、承認後に着手する
-
-# コンテキスト管理
-
-- 作業完了後は `/clear` を促すこと
-- 長いセッションでは `/compact` を提案すること
+@rules/_core/persona.md
+@rules/_core/output-format.md
+@rules/_core/session-start.md
+@rules/_core/token-efficiency.md
 
 # Git 規約
 
-@rulles/git-workflow.md
+@rules/git-workflow.md
+
+# セキュリティ
+
+@rules/security.md
+
+# Codex 連携
+
+@rules/codex.md
 
 # 記事作成のルール
 
@@ -25,17 +25,3 @@
 2. **`writer`** — seo-analyst の調査結果をベースに執筆する
 3. **`article-reviewer`** — 品質レビューを実施する（スコア80点以上で合格）
 4. 不合格の場合は **`writer`** にフィードバックを渡して再執筆 → `article-reviewer` で再評価（合格まで繰り返す）
-
-# 禁止事項
-
-- README・ドキュメントを勝手に生成・変更しない
-- テストコードを確認なしに削除・コメントアウトしない
-- 既存の動作するコードを理由なくリファクタリングしない
-
-# セキュリティについて
-
-@rules/security.md
-
-# Codex 連携
-
-@rules/codex.md
