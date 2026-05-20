@@ -1,7 +1,4 @@
 ---
-paths:
-  - "**/ga4_settings.json"
----
 
 # GA4 Data API フィールドリファレンス
 

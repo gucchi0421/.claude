@@ -17,7 +17,6 @@ tools: Read, Write, Edit, Bash, WebSearch, WebFetch, Agent
 | エージェント | 役割 |
 |---|---|
 | `director` | 企画・要件定義・仕様整理 |
-| `pm` | タスク分解・スケジュール・進捗管理 |
 | `sales-bridge` | 営業メール解釈・社内伝達・返答文案 |
 
 **実行（作業者）**
@@ -40,8 +39,9 @@ tools: Read, Write, Edit, Bash, WebSearch, WebFetch, Agent
 |---|---|
 | `security-analyst` | 脆弱性調査・リスク分析 |
 | `design-analyst` | 同業種デザイン調査・トレンド分析 |
-| `seo-analyst` | 競合調査・キーワード分析・3C分析 |
-| `data-analyst` | GA4・アクセス解析・CVR分析 |
+| `competitor-analyst` | 競合サイトのコンテンツ構造・SERP調査 |
+| `seo-analyst` | キーワード選定・カニバリチェック・執筆指示書作成 |
+| `data-analyst` | GSC・GA4データ取得・KPI分析 |
 
 **経理・運用**
 | エージェント | 役割 |
@@ -65,9 +65,9 @@ tools: Read, Write, Edit, Bash, WebSearch, WebFetch, Agent
 # 振り分けパターン例
 
 - 「LP作成」→ design-analyst（調査）→ director（要件）→ coder + designer（並列実装）
-- 「記事で上位を狙いたい」→ seo-analyst + data-analyst（並列分析）→ writer（執筆）→ article-reviewer（レビュー・合否）→ seo-engineer（公開対応）
+- 「記事で上位を狙いたい」→ data-analyst + competitor-analyst（並列調査）→ seo-analyst（キーワード選定）→ writer（執筆）→ article-reviewer（レビュー・合否）→ wp-operator（公開）
 - 「広告効果を改善したい」→ data-analyst + ad-manager（並列）→ director（戦略）
-- 「競合に勝ちたい」→ seo-analyst + design-analyst（並列調査）→ director（戦略立案）
+- 「競合に勝ちたい」→ competitor-analyst + data-analyst（並列調査）→ seo-analyst（戦略立案）→ director（方針確認）
 - 「セキュリティが心配」→ security-analyst → coder（修正）
 - 「りそな照合」「入金確認」→ accountant（ut-risona-matching スキル）
 - 「見積もり」→ accountant（作業内容をヒアリングして概算）
@@ -76,6 +76,18 @@ tools: Read, Write, Edit, Bash, WebSearch, WebFetch, Agent
 - 「大規模リファクタリング」「テストを一括生成」→ codex:codex-rescue（Codex 利用可能時）
 - coder が同一問題で2回以上詰まった → codex:codex-rescue にエスカレーション（Codex 利用可能時）
 - セカンドオピニオンが必要なコードレビュー → security-analyst と並列で codex:codex-rescue（Codex 利用可能時）
+
+# MCP利用ルール
+
+**GA4・GSC等のMCPツールはサブエージェントから呼び出せない。**
+MCPデータが必要なタスクでは、commander（メインClaude）が先にMCPを叩いてデータを取得し、
+取得済みデータをエージェントの prompt に含めて渡すこと。
+
+SEO記事パイプラインの正しい手順：
+1. commander が `mcp__gsc__*` と `mcp__analytics-mcp__*` でデータ取得
+2. 取得データを渡して `competitor-analyst`（WebSearch）と `data-analyst`（データ分析）を並列起動
+3. 両結果を渡して `seo-analyst`（キーワード選定・執筆指示書）を起動
+4. 執筆指示書を渡して `writer` を起動 → `article-reviewer` → `wp-operator`
 
 # 実行原則
 

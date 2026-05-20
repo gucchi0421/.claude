@@ -16,8 +16,8 @@
 
 ユーザーから行動を修正された場合、以下の手順を必ず実行する：
 
-1. `~/.claude/rules/` の該当ファイルを即座に更新する
+1. `~/documents/dotfiles/packages/claude/.claude/rules/` の該当ファイルを更新する
 2. 該当ファイルがなければ新規作成する
-3. 更新後、dotfiles リポジトリで `git commit` → `git push` まで実行する
+3. 更新後、~/documents/dotfiles/packages/claude/.claudeディレクトリのリポジトリで `git commit` → `git push` まで実行する
 
 これにより同じミスの繰り返しを防ぎ、Claude を「育てる」感覚で設定を積み上げていく

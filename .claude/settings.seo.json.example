@@ -1,0 +1,10 @@
+{
+  "gsc_site_url": "https://example.com/",
+  "ga4_property_id": "properties/123456789",
+  "target_topics": ["メインキーワード", "業種・サービス名"],
+  "content_goals": "月間PV・CV目標など自由記述",
+  "competitor_sites": [
+    "https://competitor1.com",
+    "https://competitor2.com"
+  ]
+}

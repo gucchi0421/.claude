@@ -21,7 +21,13 @@
 
 記事・ブログ・コラム・SEOコンテンツの執筆依頼があった場合は **必ず** 以下のパイプラインを実行する。Claude 単独での執筆は禁止。
 
-1. **`seo-analyst`** — キーワードまたは指定タイトルをもとに競合調査・検索意図の分析を行う
-2. **`writer`** — seo-analyst の調査結果をベースに執筆する
-3. **`article-reviewer`** — 品質レビューを実施する（スコア80点以上で合格）
-4. 不合格の場合は **`writer`** にフィードバックを渡して再執筆 → `article-reviewer` で再評価（合格まで繰り返す）
+**MCPはサブエージェントから使えない。GA4・GSCデータは必ずメインClaudeが取得してからエージェントに渡す。**
+プロジェクト設定は `.claude/settings.seo.json` に記載する。
+
+1. **メインClaude** — `mcp__gsc__*` と `mcp__analytics-mcp__*` でGSC・GA4データを取得する
+2. **`competitor-analyst`** と **`data-analyst`** — 取得データを渡して並列起動（競合調査・データ分析）
+3. **`seo-analyst`** — 両結果を渡してキーワード選定・執筆指示書を作成する
+4. **`writer`** — 執筆指示書をベースに執筆する
+5. **`article-reviewer`** — 品質レビューを実施する（スコア80点以上で合格）
+6. 不合格の場合は **`writer`** にフィードバックを渡して再執筆 → `article-reviewer` で再評価（合格まで繰り返す）
+7. 合格後は **`wp-operator`** が WordPress に投稿・公開する
