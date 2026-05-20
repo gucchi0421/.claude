@@ -75,7 +75,7 @@ GSCデータの `pagePath`（例: `/column/3947/`）は `gsc_site_url + pagePath
 
 記事執筆後は必ず以下の手順でファイルに書き出す：
 
-1. `mkdir -p .claude/data/agents/writer` を実行してディレクトリを作成する
+1. `pwd` で現在のディレクトリを確認し、`mkdir -p "$(pwd)/.claude/data/agents/writer"` を実行してディレクトリを作成する
 2. スラッグを決める（英数字・ハイフンのみ。他の文字は使用禁止）（例: `seo-kiso-chishiki`）
    - 使用可能: `a-z` `0-9` `-`
    - 使用禁止: 日本語・アンダースコア・スペース・大文字
@@ -98,7 +98,7 @@ GSCデータの `pagePath`（例: `/column/3947/`）は `gsc_site_url + pagePath
 </html>
 ```
 
-4. 書き出し完了後、ファイルパスとスラッグをチャットに出力する（例: パス `.claude/data/agents/writer/seo-kiso-chishiki.html` / スラッグ `seo-kiso-chishiki`）
+4. 書き出し完了後、ファイルパスとスラッグをチャットに出力する（例: パス `$(pwd)/.claude/data/agents/writer/seo-kiso-chishiki.html` / スラッグ `seo-kiso-chishiki`）
 5. article-reviewer に同ファイルパスを渡してレビューを依頼する
 6. 不合格の場合は同じパスに上書き再執筆する
 
