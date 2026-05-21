@@ -42,8 +42,8 @@ ${EXTRA}
 }
 \`\`\`"
 
-# Codex 実行・全ログ保存
-codex exec "$PROMPT" 2>&1 | tee "$LOG_FILE"
+# Codex 実行・全ログ保存（exit code が非0でも続行する）
+codex exec "$PROMPT" 2>&1 | tee "$LOG_FILE" || true
 
 # JSON ブロック抽出
 JSON=$(awk '/^```json/{found=1; next} /^```/{if(found) exit} found{print}' "$LOG_FILE")
