@@ -55,9 +55,19 @@ bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
 - JSON の `log_file` フィールドにログのフルパスが含まれるので、サマリーに必ず記載して参照しやすくする
 - 詳細確認が必要なときは `! cat <log_file>` で任意に参照できる
 
-### フォールバック: Codex CLI が使えない場合（レート制限・障害など）
+### フォールバック①: Gemini CLI（自動）
 
-`review_codex.sh` が **exit 2** を返した場合（`"fallback": true` を含む JSON が出力される）、**即座に** `article-reviewer` エージェントに切り替える。再度 `review_codex.sh` や `codex exec` を試みてはいけない。
+`review_codex.sh` は Codex が使えない場合、自動的に `review_gemini.sh` にフォールバックする。Claude 側での切り替え操作は不要。
+
+```bash
+# review_codex.sh を呼ぶだけでよい（Gemini への切り替えはスクリプトが自動で行う）
+ARTICLE=$(cat "<article_file_path>")
+bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
+```
+
+### フォールバック②: article-reviewer エージェント（最終手段）
+
+`review_codex.sh` / `review_gemini.sh` 両方が **exit 2** を返した場合（`"fallback": true`）、**即座に** `article-reviewer` エージェントに切り替える。スクリプトの再試行は禁止。
 
 ```
 Agent(subagent_type="article-reviewer", prompt="記事ファイル: <path> をレビューしてください。...")

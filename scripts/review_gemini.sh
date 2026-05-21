@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Codex にレビューを委託し、構造化サマリーだけ返す。全ログはファイル保存する。
-# Usage: codex_review.sh "<article_file_or_content>" "<extra_instructions>"
+# Gemini CLI にレビューを委託し、構造化サマリーだけ返す。全ログはファイル保存する。
+# Usage: review_gemini.sh "<article_content>" "<extra_instructions>"
 
 set -euo pipefail
 
@@ -9,10 +9,10 @@ EXTRA="${2:-}"
 LOG_DIR="$(pwd)/.codex/logs"
 mkdir -p "$LOG_DIR"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-LOG_FILE="${LOG_DIR}/codex-review-${TIMESTAMP}.log"
+LOG_FILE="${LOG_DIR}/gemini-review-${TIMESTAMP}.log"
 
 if [[ -z "$ARTICLE" ]]; then
-  echo "Usage: $0 <article_file_or_content> [extra_instructions]" >&2
+  echo "Usage: $0 <article_content> [extra_instructions]" >&2
   exit 1
 fi
 
@@ -42,17 +42,26 @@ ${EXTRA}
 }
 \`\`\`"
 
-# Codex が利用可能か確認（レート制限・障害チェック）
-if ! codex doctor --summary --ascii --no-color &>/dev/null; then
-  # Gemini にフォールバック
-  exec bash "$(dirname "$0")/review_gemini.sh" "$ARTICLE" "$EXTRA"
+# Gemini が利用可能か確認（応答チェック）
+if ! GEMINI_CLI_TRUST_WORKSPACE=true gemini -p "ping" --output-format json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); exit(0 if d.get('response') else 1)" 2>/dev/null; then
+  echo "{\"score\": null, \"pass\": false, \"summary\": \"Gemini利用不可\", \"issues\": [], \"improvement\": \"\", \"log_file\": \"\", \"fallback\": true}"
+  exit 2
 fi
 
-# Codex 実行・全ログ保存（exit code が非0でも続行する）
-codex exec "$PROMPT" 2>&1 | tee "$LOG_FILE" || true
+# Gemini 実行・全ログ保存
+GEMINI_CLI_TRUST_WORKSPACE=true gemini -p "$PROMPT" --output-format json 2>/dev/null | tee "$LOG_FILE" || true
 
-# JSON ブロック抽出
-JSON=$(awk '/^```json/{found=1; next} /^```/{if(found) exit} found{print}' "$LOG_FILE")
+# JSON レスポンスから response フィールドを抽出し、その中の ```json ブロックを取り出す
+JSON=$(python3 -c "
+import sys, json, re
+try:
+    data = json.load(open('${LOG_FILE}'))
+    response = data.get('response', '')
+    m = re.search(r'\`\`\`json\s*(.*?)\s*\`\`\`', response, re.DOTALL)
+    print(m.group(1) if m else '')
+except Exception:
+    print('')
+" 2>/dev/null)
 
 if [[ -z "$JSON" ]]; then
   echo "⚠️  JSON の抽出に失敗したのだ。生ログを確認してほしいのだ: ${LOG_FILE}" >&2
