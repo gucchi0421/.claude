@@ -6,7 +6,7 @@ set -euo pipefail
 
 ARTICLE="${1:-}"
 EXTRA="${2:-}"
-LOG_DIR="$(pwd)/.codex/logs"
+LOG_DIR="$(pwd)/.gemini/logs"
 mkdir -p "$LOG_DIR"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 LOG_FILE="${LOG_DIR}/gemini-review-${TIMESTAMP}.log"
