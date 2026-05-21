@@ -22,4 +22,4 @@
 
 @rules/workflows/article-writing.md
 @rules/workflows/article-review.md
-@rules/workflows/article-thumbnail.md
+@rules/workflows/article-generate-thumbnail.md
