@@ -2,7 +2,7 @@
 name: chatwork
 description: >
   Chatwork の指定ルームにメッセージを送信するスキル。
-  ~/.claude/scripts/chatwork_send.py を使い、プロジェクト直下の .env から API キーを読む。
+  ~/.claude/scripts/send_chatwork.py を使い、プロジェクト直下の .env から API キーを読む。
 ---
 
 # Chatwork 送信スキル
@@ -26,7 +26,7 @@ EOF
 ## 実行コマンド
 
 ```bash
-python3 ~/.claude/scripts/chatwork_send.py <room_id> <<EOF
+python3 ~/.claude/scripts/send_chatwork.py <room_id> <<EOF
 メッセージ本文
 EOF
 ```

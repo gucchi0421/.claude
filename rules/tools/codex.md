@@ -38,6 +38,23 @@
 
 ---
 
+## 記事レビューの委託方法
+
+記事レビューは **必ず `~/.claude/scripts/review_codex.sh` 経由で実行する**。
+Agent ツールや `codex:rescue` を直接使った場合、Codex のログ全文がコンテキストに乗りトークンを大量消費するため禁止。
+
+```bash
+ARTICLE=$(cat "<article_file_path>")
+bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
+```
+
+- スクリプトは構造化 JSON サマリーのみを stdout に返す（70〜85% のトークン削減）
+- 全ログは `~/.claude/logs/codex-review-YYYYMMDD-HHMMSS.log` に自動保存される
+- JSON の `log_file` フィールドにログのフルパスが含まれるので、サマリーに必ず記載して参照しやすくする
+- 詳細確認が必要なときは `! cat <log_file>` で任意に参照できる
+
+---
+
 ## Codex の動作仕様（把握しておくべき点）
 
 - デフォルトは `--write` モード（ファイルを書き換える）

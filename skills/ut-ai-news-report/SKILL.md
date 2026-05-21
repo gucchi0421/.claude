@@ -93,7 +93,7 @@ https://url
 送信コマンド：
 
 ```bash
-python3 ~/.claude/scripts/chatwork_send.py 435056192 <<EOF
+python3 ~/.claude/scripts/send_chatwork.py 435056192 <<EOF
 （メッセージ本文）
 EOF
 ```
