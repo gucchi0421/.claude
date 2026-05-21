@@ -20,3 +20,5 @@ skills/sa-*/
 
 .serena/**
 !.serena/project.yml
+
+.codex/**
