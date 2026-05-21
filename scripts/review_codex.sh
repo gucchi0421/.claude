@@ -42,6 +42,12 @@ ${EXTRA}
 }
 \`\`\`"
 
+# Codex が利用可能か確認（レート制限・障害チェック）
+if ! codex doctor --summary --ascii --no-color &>/dev/null; then
+  echo "{\"score\": null, \"pass\": false, \"summary\": \"Codex利用不可\", \"issues\": [], \"improvement\": \"\", \"log_file\": \"\", \"fallback\": true}"
+  exit 2
+fi
+
 # Codex 実行・全ログ保存（exit code が非0でも続行する）
 codex exec "$PROMPT" 2>&1 | tee "$LOG_FILE" || true
 

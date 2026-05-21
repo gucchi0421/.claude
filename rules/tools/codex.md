@@ -40,6 +40,8 @@
 
 ## 記事レビューの委託方法
 
+### 優先: Codex CLI が使える場合
+
 記事レビューは **必ず `~/.claude/scripts/review_codex.sh` 経由で実行する**。
 Agent ツールや `codex:rescue` を直接使った場合、Codex のログ全文がコンテキストに乗りトークンを大量消費するため禁止。
 
@@ -52,6 +54,17 @@ bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
 - 全ログは `$(pwd)/.codex/logs/codex-review-YYYYMMDD-HHMMSS.log` に自動保存される
 - JSON の `log_file` フィールドにログのフルパスが含まれるので、サマリーに必ず記載して参照しやすくする
 - 詳細確認が必要なときは `! cat <log_file>` で任意に参照できる
+
+### フォールバック: Codex CLI が使えない場合（レート制限・障害など）
+
+`review_codex.sh` が **exit 2** を返した場合（`"fallback": true` を含む JSON が出力される）、**即座に** `article-reviewer` エージェントに切り替える。再度 `review_codex.sh` や `codex exec` を試みてはいけない。
+
+```
+Agent(subagent_type="article-reviewer", prompt="記事ファイル: <path> をレビューしてください。...")
+```
+
+- `article-reviewer` は WebSearch で事実確認・ハルシネーション検証もできる
+- スコア80点以上で合格の基準は同じ
 
 ---
 
