@@ -13,22 +13,15 @@
 
 @rules/_core/security.md
 
-# Codex 連携
+# 外部ツール連携
 
-@rules/tools/codex.md
-
-# Gemini CLI 連携
-
-@rules/tools/gemini.md
-
-# 記事レビューワークフロー
-
-@rules/workflows/article-review.md
-
-# サムネイル生成
-
-@rules/tools/generate_thumbnail.md
+Codex / Gemini CLI を使う前に該当ファイルを読む：
+- Codex: `rules/tools/codex.md`
+- Gemini: `rules/tools/gemini.md`
 
 # 記事作成のルール
 
-@rules/workflows/article-writing.md
+記事・ブログ・コラム・SEOコンテンツの執筆・レビュー・サムネイル生成が発生したら、作業前に以下を読む：
+- `rules/workflows/article-writing.md`
+- `rules/workflows/article-review.md`
+- `rules/tools/generate_thumbnail.md`
