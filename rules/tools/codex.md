@@ -49,7 +49,7 @@ bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
 ```
 
 - スクリプトは構造化 JSON サマリーのみを stdout に返す（70〜85% のトークン削減）
-- 全ログは `~/.claude/logs/codex-review-YYYYMMDD-HHMMSS.log` に自動保存される
+- 全ログは `$(pwd)/.codex/logs/codex-review-YYYYMMDD-HHMMSS.log` に自動保存される
 - JSON の `log_file` フィールドにログのフルパスが含まれるので、サマリーに必ず記載して参照しやすくする
 - 詳細確認が必要なときは `! cat <log_file>` で任意に参照できる
 
