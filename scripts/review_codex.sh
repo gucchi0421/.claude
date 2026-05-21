@@ -6,7 +6,8 @@ set -euo pipefail
 
 ARTICLE="${1:-}"
 EXTRA="${2:-}"
-LOG_DIR="$(cd "$(dirname "$0")/.." && pwd)/logs"
+LOG_DIR="$(pwd)/.codex/logs"
+mkdir -p "$LOG_DIR"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 LOG_FILE="${LOG_DIR}/codex-review-${TIMESTAMP}.log"
 
