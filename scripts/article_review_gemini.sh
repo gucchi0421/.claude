@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Gemini CLI にレビューを委託し、構造化サマリーだけ返す。全ログはファイル保存する。
-# Usage: review_gemini.sh "<article_content>" "<extra_instructions>"
+# Usage: article_review_gemini.sh "<article_content>" "<extra_instructions>"
 
 set -euo pipefail
 

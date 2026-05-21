@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Codex にレビューを委託し、構造化サマリーだけ返す。全ログはファイル保存する。
-# Usage: codex_review.sh "<article_file_or_content>" "<extra_instructions>"
+# Usage: article_review_codex.sh "<article_content>" "<extra_instructions>"
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 LOG_FILE="${LOG_DIR}/codex-review-${TIMESTAMP}.log"
 
 if [[ -z "$ARTICLE" ]]; then
-  echo "Usage: $0 <article_file_or_content> [extra_instructions]" >&2
+  echo "Usage: $0 <article_content> [extra_instructions]" >&2
   exit 1
 fi
 
@@ -45,7 +45,7 @@ ${EXTRA}
 # Codex が利用可能か確認（レート制限・障害チェック）
 if ! codex doctor --summary --ascii --no-color &>/dev/null; then
   # Gemini にフォールバック
-  exec bash "$(dirname "$0")/review_gemini.sh" "$ARTICLE" "$EXTRA"
+  exec bash "$(dirname "$0")/article_review_gemini.sh" "$ARTICLE" "$EXTRA"
 fi
 
 # Codex 実行・全ログ保存（exit code が非0でも続行する）

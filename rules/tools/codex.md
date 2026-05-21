@@ -42,32 +42,31 @@
 
 ### 優先: Codex CLI が使える場合
 
-記事レビューは **必ず `~/.claude/scripts/review_codex.sh` 経由で実行する**。
-Agent ツールや `codex:rescue` を直接使った場合、Codex のログ全文がコンテキストに乗りトークンを大量消費するため禁止。
+記事レビューは **必ず `~/.claude/scripts/article_review.sh` 経由で実行する**。
+Agent ツールや `codex:rescue` を直接使った場合、ログ全文がコンテキストに乗りトークンを大量消費するため禁止。
 
 ```bash
 ARTICLE=$(cat "<article_file_path>")
-bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
+bash ~/.claude/scripts/article_review.sh "$ARTICLE" "<追加指示>"
 ```
 
 - スクリプトは構造化 JSON サマリーのみを stdout に返す（70〜85% のトークン削減）
-- 全ログは `$(pwd)/.codex/logs/codex-review-YYYYMMDD-HHMMSS.log` に自動保存される
+- 優先順位: **Codex → Gemini → article-reviewer** の順で自動フォールバック
+- 全ログは `$(pwd)/.codex/logs/` に自動保存される
 - JSON の `log_file` フィールドにログのフルパスが含まれるので、サマリーに必ず記載して参照しやすくする
 - 詳細確認が必要なときは `! cat <log_file>` で任意に参照できる
 
-### フォールバック①: Gemini CLI（自動）
+### 内部スクリプト構成（直接呼び出し禁止）
 
-`review_codex.sh` は Codex が使えない場合、自動的に `review_gemini.sh` にフォールバックする。Claude 側での切り替え操作は不要。
+| スクリプト | 役割 |
+|---|---|
+| `article_review.sh` | メイン振り分け担当（これだけ呼ぶ） |
+| `article_review_codex.sh` | Codex 実行 → NG なら Gemini へ自動移譲 |
+| `article_review_gemini.sh` | Gemini CLI 実行 |
 
-```bash
-# review_codex.sh を呼ぶだけでよい（Gemini への切り替えはスクリプトが自動で行う）
-ARTICLE=$(cat "<article_file_path>")
-bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "<追加指示>"
-```
+### フォールバック: article-reviewer エージェント（最終手段）
 
-### フォールバック②: article-reviewer エージェント（最終手段）
-
-`review_codex.sh` / `review_gemini.sh` 両方が **exit 2** を返した場合（`"fallback": true`）、**即座に** `article-reviewer` エージェントに切り替える。スクリプトの再試行は禁止。
+`article_review.sh` が **exit 2** を返した場合（`"fallback": true`）、**即座に** `article-reviewer` エージェントに切り替える。スクリプトの再試行は禁止。
 
 ```
 Agent(subagent_type="article-reviewer", prompt="記事ファイル: <path> をレビューしてください。...")
