@@ -1,12 +1,5 @@
 # Gemini CLI 連携ルール
 
-## 用途
-
-記事レビューのフォールバック（Codex が使えない場合）として使用する。
-詳細は `workflows/article-review.md` を参照。
-
----
-
 ## 基本コマンド
 
 ```bash
