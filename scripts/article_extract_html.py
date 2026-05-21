@@ -37,7 +37,7 @@ class ArticleExtractor(HTMLParser):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print('Usage: extract_article.py <html_file>', file=sys.stderr)
+        print('Usage: article_extract_html.py <html_file>', file=sys.stderr)
         sys.exit(1)
 
     parser = ArticleExtractor()

@@ -103,7 +103,7 @@ writer が出力した HTML ファイルを WP に投稿する際は、以下を
 HTMLファイル全体をそのまま投稿してはならない。`<article>` タグの中身のみを投稿本文として使う。
 
 ```bash
-python3 ~/.claude/scripts/extract_article.py {htmlファイルパス}
+python3 ~/.claude/scripts/article_extract_html.py {htmlファイルパス}
 ```
 
 タイトル・メタディスクリプションは `<title>` / `<meta name="description">` から別途取得してWP側に設定する。
