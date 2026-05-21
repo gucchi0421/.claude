@@ -17,6 +17,14 @@
 
 @rules/tools/codex.md
 
+# Gemini CLI 連携
+
+@rules/tools/gemini.md
+
+# 記事レビューワークフロー
+
+@rules/workflows/article-review.md
+
 # サムネイル生成
 
 @rules/tools/generate_thumbnail.md
