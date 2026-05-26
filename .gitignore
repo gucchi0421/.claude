@@ -1,4 +1,5 @@
 *.local
+CLAUDE.local.md
 
 .mypy_cache
 
@@ -22,3 +23,5 @@ skills/sa-*/
 !.serena/project.yml
 
 .codex/**
+
+.gemini/**
