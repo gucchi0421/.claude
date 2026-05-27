@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# セッション終了時にプロジェクトの .claude/logs/summary/YYYYMMDD時分秒.md を書く
-# Stop hook から呼ばれる: bash ~/.claude/scripts/session_summary.sh
+# Stop hook: プロジェクトの .claude/logs/summary/YYYYMMDD.md に当日の作業を上書き保存する
+# Gemini不使用・work logをそのまま整形するだけ
 
 set -euo pipefail
 
 # プロジェクトの .claude ディレクトリを探す
-find_project_claude() {
+find_project_root() {
   local dir="$PWD"
   while [[ "$dir" != "/" ]]; do
     if [[ -d "$dir/.claude" ]]; then
@@ -17,64 +17,46 @@ find_project_claude() {
   return 1
 }
 
-PROJECT_ROOT=$(find_project_claude) || exit 0
+PROJECT_ROOT=$(find_project_root) || exit 0
 
 SUMMARY_DIR="$PROJECT_ROOT/.claude/logs/summary"
 mkdir -p "$SUMMARY_DIR"
 
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
-SUMMARY_FILE="$SUMMARY_DIR/${TIMESTAMP}.md"
-
-# 今日の work ログを収集
 TODAY=$(date +%Y%m%d)
-WORK_LOG=$(find "$PROJECT_ROOT/.claude/logs/work" -name "${TODAY}*" 2>/dev/null | sort | xargs cat 2>/dev/null || echo "")
+SUMMARY_FILE="$SUMMARY_DIR/${TODAY}.md"
+
+WORK_DIR="$PROJECT_ROOT/.claude/logs/work"
+WORK_LOG=$(find "$WORK_DIR" -name "${TODAY}*" 2>/dev/null | sort | xargs cat 2>/dev/null || echo "")
 
 if [[ -z "$WORK_LOG" ]]; then
   exit 0
 fi
 
-PROMPT="以下の作業ログを読んで、このセッションの作業サマリーをMarkdown形式で書いてください。
+# 操作一覧を抽出（### HH:MM - Action(file) の行だけ）
+OPERATIONS=$(echo "$WORK_LOG" | grep '^### ' || echo "（操作なし）")
 
-## 出力形式
-\`\`\`markdown
-# セッションサマリー YYYY-MM-DD HH:MM
+# 変更ファイル一覧を抽出（重複除去）
+CHANGED_FILES=$(echo "$WORK_LOG" | grep '^### ' \
+  | sed 's/^### [0-9:]\+ - [A-Za-z]\+(\(.*\))$/\1/' \
+  | grep -v '^$' \
+  | sort -u \
+  || echo "（なし）")
 
-## 実施した作業
-- 箇条書きで簡潔に
+PROJECT_NAME=$(basename "$PROJECT_ROOT")
 
-## 変更したファイル
-- ファイルパスと変更内容を簡潔に
-
-## 残課題・次回やること
-- あれば記載（なければ「なし」）
-\`\`\`
-
-Markdownのみ返してください。説明文は不要です。
-
-## 作業ログ
-$WORK_LOG"
-
-RESULT=$(GEMINI_CLI_TRUST_WORKSPACE=true gemini -p "$PROMPT" --output-format json 2>/dev/null \
-  | python3 -c "import sys,json; print(json.load(sys.stdin).get('response',''))" 2>/dev/null || echo "")
-
-if [[ -z "$RESULT" ]]; then
-  # Gemini が使えない場合は work ログをそのまま保存
-  {
-    echo "# セッションサマリー $(date '+%Y-%m-%d %H:%M')"
-    echo ""
-    echo "## 作業ログ（raw）"
-    echo "$WORK_LOG"
-  } > "$SUMMARY_FILE"
-  exit 0
-fi
-
-# コードブロックを除去して保存
-echo "$RESULT" | python3 -c "
-import sys, re
-text = sys.stdin.read()
-match = re.search(r'\`\`\`(?:markdown)?\s*([\s\S]*?)\`\`\`', text)
-if match:
-    print(match.group(1).strip())
-else:
-    print(text.strip())
-" > "$SUMMARY_FILE"
+{
+  echo "# 作業サマリー $(date '+%Y-%m-%d') — ${PROJECT_NAME}"
+  echo ""
+  echo "## 操作ログ"
+  echo ""
+  echo "$OPERATIONS"
+  echo ""
+  echo "## 変更ファイル"
+  echo ""
+  echo "$CHANGED_FILES" | while read -r f; do
+    echo "- \`$f\`"
+  done
+  echo ""
+  echo "---"
+  echo "_最終更新: $(date '+%H:%M:%S')_"
+} > "$SUMMARY_FILE"
