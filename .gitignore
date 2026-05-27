@@ -11,6 +11,8 @@ CLAUDE.local.md
 
 **/.claude/logs/work/**
 **/.claude/logs/deploy/**
+**/.claude/logs/summary/**
+logs/
 **/.claude/settings.*.json
 
 skills/sa-*/
