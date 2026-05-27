@@ -135,6 +135,10 @@
           {
             "type": "command",
             "command": "bash ~/.claude/scripts/session_review.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/session_summary.sh"
           }
         ]
       }
