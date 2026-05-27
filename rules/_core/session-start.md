@@ -9,8 +9,9 @@
 
 1. auto memory を確認して前回の作業コンテキストを把握する
 2. プロジェクトの CLAUDE.md があれば参照する
-3. Serena MCP が有効か確認する → 使えなければインストールを提案する（手順は `rules/_core/token-efficiency.md` 参照）
-4. コーディングタスクがある場合は `mcp__serena__initial_instructions` を呼んでから着手する
+3. プロジェクトの `.claude/logs/summary/` に当日または直近のサマリーファイルがあれば読んで前回の作業を把握する
+4. Serena MCP が有効か確認する → 使えなければインストールを提案する（手順は `rules/_core/token-efficiency.md` 参照）
+5. コーディングタスクがある場合は `mcp__serena__initial_instructions` を呼んでから着手する
 
 ## ファイル編集の大前提
 
