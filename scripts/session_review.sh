@@ -5,7 +5,7 @@
 set -euo pipefail
 
 RULES_DIR="$HOME/documents/dotfiles/packages/claude/.claude/rules"
-LOGS_DIR="$HOME/documents/dotfiles/packages/claude/.claude/settions"
+LOGS_DIR="$HOME/.claude/logs"
 PROPOSALS_JSON="$LOGS_DIR/pending_proposals.json"
 
 mkdir -p "$LOGS_DIR"

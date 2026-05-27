@@ -29,9 +29,10 @@
 
 これにより同じミスの繰り返しを防ぎ、Claude を「育てる」感覚で設定を積み上げていく
 
-## セッション終了時（自動）
+## セッション終了時
 
-Stop hook により `~/.claude/scripts/session_review.sh` が自動実行され、セッションログを Gemini で分析してルール改善提案を `~/documents/dotfiles/packages/claude/.claude/settions/pending_proposals.json` に保存する。
+- Stop hook により `~/.claude/scripts/session_review.sh` が自動実行され、work log を Gemini で分析してルール改善提案を `~/.claude/logs/pending_proposals.json` に保存する
+- 大きな作業の区切り・`/clear` 前には必ず `/summary` を実行してサマリーを残すこと
 
 ## セッション開始時の提案チェック
 
