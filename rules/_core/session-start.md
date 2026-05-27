@@ -31,13 +31,4 @@
 
 ## セッション終了時
 
-- Stop hook により `~/.claude/scripts/session_review.sh` が自動実行され、work log を Gemini で分析してルール改善提案を `~/.claude/logs/pending_proposals.json` に保存する
 - 大きな作業の区切り・`/clear` 前には必ず `/summary` を実行してサマリーを残すこと
-
-## セッション開始時の提案チェック
-
-1. `~/.claude/logs/pending_proposals.json` が存在するか確認する
-2. 存在する場合、中身を読んでユーザーに提案内容を伝える
-3. ユーザーが承認したら `rules/` の該当ファイルを直接編集して git commit → git push する
-4. 適用後は `pending_proposals.json` を削除する
-5. 拒否された場合もファイルを削除する

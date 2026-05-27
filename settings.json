@@ -128,16 +128,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/scripts/session_review.sh"
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
@@ -176,7 +166,15 @@
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
-    "excludedCommands": ["git", "docker"],
-    "network": { "allowedDomains": ["github.com", "*.npmjs.org"] }
+    "excludedCommands": [
+      "git",
+      "docker"
+    ],
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.npmjs.org"
+      ]
+    }
   }
 }
