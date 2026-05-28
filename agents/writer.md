@@ -195,13 +195,16 @@ A. 回答2
 
 # ファイル出力手順
 
+**⚠️ 出力ファイルは `.md` 1本のみ。`.html` `.txt` は絶対に作らない。**
+HTMLへの変換は wp-operator が `article_md_to_html.py` で行う。writerはMarkdownだけ書けばよい。
+
 **保存先の絶対パスは呼び出し元から受け取る。`$(pwd)` で自己解決しない。**
 
 呼び出し元から `ARTICLES_DIR=/path/to/project/.claude/articles` が渡される。
 
 1. `mkdir -p "${ARTICLES_DIR}"` を実行
-2. スラッグを決める（`a-z` `0-9` `-` のみ。日本語・`_`・大文字・`draft_`プレフィックス禁止）
-3. 以下の構造で `${ARTICLES_DIR}/[slug].md` に書き出す（**HTMLではなくMarkdown**）：
+2. スラッグを決める（`a-z` `0-9` `-` のみ。日本語・`_`・大文字・記事ID・`rewrite`等のタスク名禁止）
+3. 以下の構造で `${ARTICLES_DIR}/[slug].md` に書き出す（**`.html`や`.txt`は作らない**）：
 
 ```markdown
 ---
