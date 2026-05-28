@@ -160,7 +160,7 @@ writer が `.claude/articles/{slug}.jpg` に生成済みの場合はそちらを
 #### 生成コマンド（画像がない場合）
 
 ```bash
-python3 ~/.claude/scripts/generate_thumbnail.py \
+python3 ~/.claude/scripts/article_generate_thumbnail.py \
   --title "記事タイトル" \
   --slug {slug} \
   --scene "（記事内容から浮かぶ英語シーン描写・50語以上）" \

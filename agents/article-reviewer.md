@@ -28,12 +28,12 @@ Codex は Claude が見落とす視点（論理の飛躍・根拠の薄さ・構
 
 # 作業フロー
 
-1. writer から渡されたファイルパス（`.claude/data/agents/writer/<title>.html`）を Read する
+1. 呼び出し元から渡されたファイルパス（`ARTICLES_DIR/{slug}.md`）を Read する
 2. `~/.claude/scripts/review_codex.sh` を使って Codex にレビューを委託する
 
    ```bash
    # 記事の中身を引数として渡す
-   ARTICLE=$(cat ".claude/data/agents/writer/<title>.html")
+   ARTICLE=$(cat "${ARTICLES_DIR}/{slug}.md")
    EXTRA="ルーブリックに従い100点満点で評価してください。事実確認できない内容を正しいと断定しないこと。"
    bash ~/.claude/scripts/review_codex.sh "$ARTICLE" "$EXTRA"
    ```
