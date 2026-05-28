@@ -394,6 +394,15 @@ def convert(md_path, contact_url='/contact/'):
             h2_text = line[3:].strip()
             # {#anchor} 記法を除去
             h2_text = re.sub(r'\s*\{#[^}]+\}', '', h2_text).strip()
+            # 「目次」セクションはスキップ（article-tocで自動生成するため）
+            if h2_text in ('目次', 'Table of Contents', 'TOC'):
+                current_h2 = None
+                current_lines = []
+                i += 1
+                # 次の ## まで読み飛ばす
+                while i < len(lines) and not lines[i].startswith('## '):
+                    i += 1
+                continue
             current_h2 = h2_text
             current_lines = []
         else:
