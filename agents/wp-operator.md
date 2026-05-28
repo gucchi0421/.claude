@@ -97,11 +97,15 @@ EOF
 
 呼び出し元から `ARTICLES_DIR=/path/to/project/.claude/articles` が渡される。
 
+**⚠️ 受け取るファイルは `.md` のみ。`.html` `.txt` が渡された場合は処理を中断し、writerに `.md` で出力し直すよう差し戻す。**
+
+投稿フローは必ず `.md` → `article_md_to_html.py` → HTML → WP投稿の順で行う。この変換ステップをスキップしてはならない。
+
 writer が出力した Markdown ファイルを WP に投稿する際は、以下を**必ず**この順番で実行する。
 
 ### 1. Markdown → HTML 変換
 
-writer は `.md` ファイルで出力する。まず `article_md_to_html.py` で HTML に変換する。
+`.md` ファイル以外は受け付けない。まず `article_md_to_html.py` で HTML に変換する。
 
 ```bash
 python3 ~/.claude/scripts/article_md_to_html.py \
