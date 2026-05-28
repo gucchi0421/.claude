@@ -97,9 +97,22 @@ EOF
 
 呼び出し元から `ARTICLES_DIR=/path/to/project/.claude/articles` が渡される。
 
-writer が出力した HTML ファイルを WP に投稿する際は、以下を**必ず**この順番で実行する。
+writer が出力した Markdown ファイルを WP に投稿する際は、以下を**必ず**この順番で実行する。
 
-### 1. 本文の抽出（HTMLファイルから `<article>` タグ内のみ使う）
+### 1. Markdown → HTML 変換
+
+writer は `.md` ファイルで出力する。まず `article_md_to_html.py` で HTML に変換する。
+
+```bash
+python3 ~/.claude/scripts/article_md_to_html.py \
+  {mdファイルパス} \
+  {mdファイルパスの拡張子を.htmlに変えたパス} \
+  --contact-url "$(cat .claude/settings.seo.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('contact_url', '/contact/'))")"
+```
+
+`.claude/settings.seo.json` に `contact_url` が定義されていない場合は `/contact/` を使う。
+
+### 2. 本文の抽出（HTMLファイルから `<article>` タグ内のみ使う）
 
 HTMLファイル全体をそのまま投稿してはならない。`<article>` タグの中身のみを投稿本文として使う。
 
@@ -109,7 +122,7 @@ python3 ~/.claude/scripts/article_extract_html.py {htmlファイルパス}
 
 タイトル・メタディスクリプションは `<title>` / `<meta name="description">` から別途取得してWP側に設定する。
 
-### 2. WP投稿作成
+### 3. WP投稿作成
 
 ```bash
 wp post create \
@@ -120,7 +133,7 @@ wp post create \
   --porcelain  # post_id を出力させる
 ```
 
-### 3. サムネイル生成・アイキャッチ設定
+### 4. サムネイル生成・アイキャッチ設定
 
 post_id 取得後に必ず実行する。スキップ禁止。
 
@@ -191,13 +204,13 @@ design tools and sticky notes with price breakdowns on desk,
 warm desk lamp light casting golden glow on keyboard
 ```
 
-### 4. 記事公開
+### 5. 記事公開
 
 サムネイル設定の完了を確認してから公開する。
 
 ## 記事公開時のスラッグ指定
-- writer が出力した `{スラッグ}.html` のスラッグ部分をそのまま WP のスラッグに設定する
-- 例: writer が `seo-kiso-chishiki.html` を出力した場合 → WP スラッグは `seo-kiso-chishiki`
+- writer が出力した `{スラッグ}.md` のスラッグ部分をそのまま WP のスラッグに設定する
+- 例: writer が `seo-kiso-chishiki.md` を出力した場合 → WP スラッグは `seo-kiso-chishiki`
 - スラッグを独自に変更・推測しない。必ず writer の出力値を使う
 
 # 出力フォーマット
