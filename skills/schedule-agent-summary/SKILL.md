@@ -2,7 +2,7 @@
 name: schedule-agent-summary
 description: >
   スケジュール実行されたエージェントが作業完了後にログを記録するスキル。
-  .claude/logs/schedule/{agent-name}/YYYYMMDD.md に追記し、
+  .claude/logs/schedule/YYYYMMDD_{agent-name}.md に追記し、
   .claude/logs/schedule/index.md を更新して次回起動時の引き継ぎに使う。
   エージェントが自律実行の最後に必ず呼び出す。
 ---
@@ -17,10 +17,10 @@ description: >
 ## 出力先
 
 ### 個別ログ
-`{プロジェクトルート}/.claude/logs/schedule/{agent-name}/YYYYMMDD.md`
+`{プロジェクトルート}/.claude/logs/schedule/YYYYMMDD_{agent-name}.md`
 
-- `{agent-name}` は実行エージェント名（`writer` / `seo-engineer` / `wp-operator` など）
-- 同日ファイルが存在する場合は末尾に追記
+- `{agent-name}` は実際に作業したエージェント名（`writer` / `seo-engineer` / `wp-operator` など）
+- 同日・同エージェントのファイルが存在する場合は末尾に `---` を挟んで追記
 
 ### インデックス
 `{プロジェクトルート}/.claude/logs/schedule/index.md`
@@ -68,9 +68,9 @@ description: >
 ## 手順
 
 1. プロジェクトルートを特定する（`.claude/` を持つ最も近い祖先ディレクトリ）
-2. `LOG_DIR={プロジェクトルート}/.claude/logs/schedule/{agent-name}` を作成（なければ）
-3. `LOG_FILE=$LOG_DIR/$(date +%Y%m%d).md` を決定
-4. 上記フォーマットで個別ログを生成・追記する
+2. `LOG_DIR={プロジェクトルート}/.claude/logs/schedule` を作成（なければ）
+3. `LOG_FILE=$LOG_DIR/$(date +%Y%m%d)_{agent-name}.md` を決定
+4. 上記フォーマットで個別ログを生成・追記する（既存なら `---` 挟んで追記）
 5. `index.md` を読み込み、該当エージェントの行を更新して上書き保存する
 
 ## ファイル先頭（個別ログ新規作成時のみ）
