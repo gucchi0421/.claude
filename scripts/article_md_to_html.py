@@ -215,13 +215,15 @@ def render_body(body_lines, contact_url):
 
         # H3
         if line.startswith('### '):
-            html += f'<h3>{inline_convert(line[4:].strip())}</h3>\n'
+            h3_text = re.sub(r'\s*\{#[^}]+\}', '', line[4:].strip())
+            html += f'<h3>{inline_convert(h3_text)}</h3>\n'
             j += 1
             continue
 
         # H4
         if line.startswith('#### '):
-            html += f'<h4>{inline_convert(line[5:].strip())}</h4>\n'
+            h4_text = re.sub(r'\s*\{#[^}]+\}', '', line[5:].strip())
+            html += f'<h4>{inline_convert(h4_text)}</h4>\n'
             j += 1
             continue
 
@@ -389,7 +391,10 @@ def convert(md_path, contact_url='/contact/'):
         line = lines[i]
         if line.startswith('## '):
             flush_section(current_h2, current_lines)
-            current_h2 = line[3:].strip()
+            h2_text = line[3:].strip()
+            # {#anchor} 記法を除去
+            h2_text = re.sub(r'\s*\{#[^}]+\}', '', h2_text).strip()
+            current_h2 = h2_text
             current_lines = []
         else:
             current_lines.append(line)
