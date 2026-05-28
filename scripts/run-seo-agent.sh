@@ -20,10 +20,10 @@ echo "=== $(date '+%Y-%m-%d %H:%M:%S') 開始 [task: $TASK] ===" >> "$SCHEDULE_L
 
 case "$TASK" in
   rewrite)
-    PROMPT="下書き記事を1本リライトして公開してほしいのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    PROMPT="下書き記事を1本リライトして公開してほしいのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。【役割分担】記事の執筆・リライトは必ずwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
     ;;
   new-article)
-    PROMPT="GSCデータを分析して完全新規の記事を1本執筆・公開してほしいのだ。既存の下書きや投稿を流用・更新するのは禁止なのだ。必ず新しい投稿IDで wp post create から始めること。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    PROMPT="GSCデータを分析して完全新規の記事を1本執筆・公開してほしいのだ。既存の下書きや投稿を流用・更新するのは禁止なのだ。必ず新しい投稿IDで wp post create から始めること。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。【役割分担】記事の執筆はwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
     ;;
   seo)
     PROMPT="GSCクイックウィン分析してタイトル・ディスクリプション・AIOSEOを改善してほしいのだ。サイトのグローバル設定、記事ごとのAIOSEO設定も範囲内なのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
