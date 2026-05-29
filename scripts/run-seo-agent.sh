@@ -1,5 +1,5 @@
 #!/bin/bash
-# 引数1: rewrite（下書きリライト）/ new-article（新規記事）/ seo（SEO改善）/ pdca（構造改善）
+# 引数1: rewrite（下書きリライト）/ new-article（新規記事）/ seo（SEO改善）/ pdca（構造改善）/ patrol（記事パトロール・自動修正）/ link（内部リンク巡回）
 # 引数2: PROJECT_DIR（プロジェクトの絶対パス）
 TASK="${1:-rewrite}"
 PROJECT_DIR="${2:?PROJECT_DIR が指定されていません。例: bash run-seo-agent.sh rewrite /home/k-taniguchi/documents/claude/e-webseisaku.com}"
@@ -31,15 +31,21 @@ case "$TASK" in
   pdca)
     PROMPT="GSC・GA4データを分析して、流入改善につながるサイト構造・導線の修正を1件実施してほしい。対象はSSH接続先(ssh webchecker5)のWordPressテストサイト。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めること。分析→仮説→実施の流れで根拠のある修正をすること。【重要】タイトル・AIOSEOのメタ情報変更はseoタスクが担当するため禁止。このタスクはPHP/CSS/テンプレートレベルの構造改善に集中すること。修正例：表示回数が多くCTRが低い記事をサイドバーや一覧上部に露出する／滞在時間が長いのに内部リンクが少ない記事にリンクカードを追加する／流入はあるがCTAが弱い記事の導線強化／ウィジェット・サイドバー構成の改善／など。テーマファイル(PHP/CSS)の直接編集もOK。必ずバックアップ(.bak)を取ってから編集すること。完了後は/schedule-agent-summaryでログを残すこと。"
     ;;
+  patrol)
+    PROMPT="公開済み記事のパトロール・自動修正を実施してほしいのだ。article-patrolerエージェントを使って以下を実行すること。PROJECT_DIR=${PROJECT_DIR} を渡すこと。【パトロール内容】1) article-index.json（${PROJECT_DIR}/.claude/data/article-index.json）を読み込み、patrolled_at が null または最も古い記事から最大15件をバッチ処理する。2) 各記事についてSSH経由でWP-CLIを使い本文HTMLを取得し、以下をチェック・自動修正する：壊れた内部リンク（インデックスに存在しないURL）の削除、article-link-card__title のテキストとインデックスのタイトルの不一致修正、フルHTML（DOCTYPE/html/head/body）混入の修正、インデックスのtitle/slugとWP実データの乖離修正。3) 修正後はWP-CLIで記事を更新し、article-index.json の patrolled_at と patrol_issues を更新する。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    ;;
+  link)
+    PROMPT="公開済み記事の内部リンクを巡回追加してほしいのだ。article-linkerエージェントを使って以下を実行すること。PROJECT_DIR=${PROJECT_DIR} を渡すこと。【処理内容】1) article-index.json（${PROJECT_DIR}/.claude/data/article-index.json）を読み込み、last_linked が null または最も古い記事から最大10件をバッチ処理する。2) 各記事について関連記事を最大3件選定し、link-card形式でH2セクション末尾に追加する。3) 関連記事側にも逆方向リンクを追加する（双方向リンク）。4) article-index.json の existing_internal_links と last_linked を更新する。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    ;;
 esac
 
 PID_FILE="$PROJECT_DIR/.claude/logs/schedule/${TASK}.pid"
 echo $$ > "$PID_FILE"
 
-# 30秒ごとにハートビートをログに記録（バックグラウンド）
+# 60秒ごとにハートビートをログに記録（バックグラウンド）
 (
   while kill -0 $$ 2>/dev/null; do
-    sleep 30
+    sleep 60
     kill -0 $$ 2>/dev/null && echo "  [$(date '+%H:%M:%S')] 処理中..." >> "$SCHEDULE_LOG_FILE"
   done
 ) &

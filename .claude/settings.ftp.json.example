@@ -1,8 +1,8 @@
 {
   "_comment": "ローカルの相対パスプレフィックス → リモートの絶対パスプレフィックス",
-  "host": "ftp.example.com",
-  "user": "ftpuser",
-  "password": "YOUR_FTP_PASSWORD",
+  "host": "",
+  "user": "",
+  "password": "",
   "remote_root": "/public_html",
   "local_root": "./",
   "passive": true

@@ -1,6 +1,8 @@
 {
   "_comment": "SSH接続設定。プロジェクト直下の .claude/settings.ssh.json に配置する",
-  "connection": "mysite",
+  "connection": "server-name",
   "config": "~/.ssh/config",
-  "allowed_dirs": ["/var/www/html"]
+  "allowed_dirs": [
+        "/var/www/html",
+    ]
 }

@@ -3,16 +3,14 @@
 Markdown記事 → e-webseisaku.comクラス付きHTML変換スクリプト
 
 使い方:
-  python3 article_md_to_html.py input.md [output.html] [--contact-url URL]
-
-  --contact-url: CTAボタンのリンク先 (デフォルト: /contact/)
+  python3 article_md_to_html.py input.md [output.html]
 
 Frontmatter (---で囲む):
   title, slug, meta_description, post_type, post_author
 
 Markdownの変換ルール:
   # H1            → <title> + <h1>
-  冒頭段落        → <div class="article-lead">
+  冒頭段落        → <p class="article-lead">
   ## H2           → <section class="article-section" id="section-N">
   ### H3          → <h3>
   - リスト        → <ul class="article-list">
@@ -30,9 +28,7 @@ Markdownの変換ルール:
   :::faq          → <div class="article-faq">
   Q. ...          →   <div class="article-faq__item"><p class="article-faq__q">
   A. ...          →   <p class="article-faq__a">
-  :::             → ブロック終端
   [[link-card]]url|テキスト → <a class="article-link-card" href="url">テキスト</a>
-  末尾段落が「お問い合わせ」「ご相談」「お気軽に」含む → article-cta に変換
 """
 
 import re
@@ -64,8 +60,8 @@ def inline_convert(text):
     text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
     # 斜体 *text*（太字と区別するため**処理後に）
     text = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', text)
-    # インラインコード `code`
-    text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+    # インラインコード `code`（中身をHTMLエスケープして<>の暴走を防ぐ）
+    text = re.sub(r'`([^`]+)`', lambda m: f'<code>{escape_html(m.group(1))}</code>', text)
     return text
 
 
@@ -157,7 +153,7 @@ def parse_faq_block(faq_lines):
     return html
 
 
-def render_body(body_lines, contact_url):
+def render_body(body_lines):
     """セクション本文行列をHTMLに変換"""
     html = ''
     j = 0
@@ -298,18 +294,12 @@ def render_body(body_lines, contact_url):
 
         if para_lines:
             para_text = ' '.join(para_lines)
-            if re.search(r'(お問い合わせ|ご相談|お気軽に)', para_text):
-                html += f'<div class="article-cta">\n'
-                html += f'  <p class="article-cta__lead">{inline_convert(para_text)}</p>\n'
-                html += f'  <a class="article-cta__button" href="{contact_url}">お問い合わせはこちら</a>\n'
-                html += f'</div>\n'
-            else:
-                html += f'<p>{inline_convert(para_text)}</p>\n'
+            html += f'<p>{inline_convert(para_text)}</p>\n'
 
     return html
 
 
-def convert(md_path, contact_url='/contact/'):
+def convert(md_path):
     text = Path(md_path).read_text(encoding='utf-8')
     lines = text.splitlines()
 
@@ -349,13 +339,13 @@ def convert(md_path, contact_url='/contact/'):
     lead_paragraphs = '\n'.join(lead_lines).strip()
     lead_html = ''
     if lead_paragraphs:
-        paras = re.split(r'\n{2,}', lead_paragraphs)
-        lead_html = '<div class="article-lead">\n'
-        for p in paras:
-            p = p.strip()
-            if p:
-                lead_html += f'  <p>{inline_convert(p)}</p>\n'
-        lead_html += '</div>'
+        paras = [p.strip() for p in re.split(r'\n{2,}', lead_paragraphs) if p.strip()]
+        if len(paras) == 1:
+            lead_html = f'<p class="article-lead">{inline_convert(paras[0])}</p>'
+        else:
+            lead_html = '\n'.join(
+                f'<p class="article-lead">{inline_convert(p)}</p>' for p in paras
+            )
 
     # metaディスクリプション自動生成
     if not meta_description and lead_paragraphs:
@@ -383,7 +373,7 @@ def convert(md_path, contact_url='/contact/'):
         toc_items.append((sid, h2_text))
         html = f'<section class="article-section" id="{sid}">\n'
         html += f'  <h2>{inline_convert(h2_text)}</h2>\n'
-        html += render_body(body_lines, contact_url)
+        html += render_body(body_lines)
         html += '</section>'
         sections.append(html)
 
@@ -450,14 +440,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Markdown → e-webseisaku HTML変換')
     parser.add_argument('input', help='入力Markdownファイル')
     parser.add_argument('output', nargs='?', help='出力HTMLファイル（省略時はstdout）')
-    parser.add_argument('--contact-url', default='/contact/', help='CTAボタンのURL (デフォルト: /contact/)')
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
         print(f'Error: {args.input} not found', file=sys.stderr)
         sys.exit(1)
 
-    html, title, meta = convert(args.input, contact_url=args.contact_url)
+    html, title, meta = convert(args.input)
 
     if args.output:
         Path(args.output).write_text(html, encoding='utf-8')
