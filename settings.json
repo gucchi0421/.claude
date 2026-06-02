@@ -125,6 +125,24 @@
             "command": "bash ~/.claude/scripts/project_init.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/notify_nvim_mascot.sh show"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/notify_nvim_mascot.sh hide"
+          }
+        ]
       }
     ]
   },
@@ -174,7 +192,7 @@
   "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
   "showTurnDuration": true,
-  "skipAutoPermissionPrompt": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "inputNeededNotifEnabled": true
+  "skipAutoPermissionPrompt": true
 }

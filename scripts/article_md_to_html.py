@@ -273,6 +273,24 @@ def render_body(body_lines):
             j += 1
             continue
 
+        # article-link-card形式 [article-link-card url="..." title="..."]
+        if line.strip().startswith('[article-link-card '):
+            m = re.match(r'\[article-link-card url="([^"]+)"\s+title="([^"]+)"\]', line.strip())
+            if m:
+                card_url = m.group(1)
+                card_title = m.group(2)
+                html += (
+                    f'<div class="article-link-card">\n'
+                    f'  <a href="{card_url}" class="article-link-card__inner" target="_blank" rel="noopener">\n'
+                    f'    <div class="article-link-card__body">\n'
+                    f'      <p class="article-link-card__title">{escape_html(card_title)}</p>\n'
+                    f'    </div>\n'
+                    f'  </a>\n'
+                    f'</div>\n'
+                )
+            j += 1
+            continue
+
         # 通常段落（連続行をまとめる）
         para_lines = []
         while j < len(body_lines):
@@ -288,6 +306,8 @@ def render_body(body_lines):
             if l.strip().startswith('```'):
                 break
             if l.strip().startswith('[[link-card]]'):
+                break
+            if l.strip().startswith('[article-link-card '):
                 break
             para_lines.append(l.strip())
             j += 1

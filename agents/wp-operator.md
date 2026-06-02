@@ -130,18 +130,41 @@ python3 ~/.claude/scripts/article_extract_html.py {htmlファイルパス} > /tm
 
 タイトル・メタディスクリプションは `<title>` / `<meta name="description">` から別途取得してWP側に設定する。
 
-### 3. WP投稿作成
+### 3. WP投稿作成 または 既存記事更新
 
 **必ず `/tmp/{slug}_body.html`（抽出済みファイル）を `--post_content` に渡す。`.html`（フルHTMLファイル）を渡してはならない。**
+
+#### 新規投稿の場合（呼び出し元から `EXISTING_POST_ID` が渡されていない）
 
 ```bash
 wp post create \
   --post_title="記事タイトル" \
   --post_content="$(cat /tmp/{slug}_body.html)" \
   --post_status=draft \
-  --post_type=post \
+  --post_type=column \
+  --post_author=1 \
   --porcelain
 ```
+
+#### リライト（既存記事更新）の場合（呼び出し元から `EXISTING_POST_ID={ID}` が渡された場合）
+
+**🚫 `wp post create` は絶対に使わない。必ず `wp post update` で既存IDを上書きする。**
+新規投稿すると旧記事と重複コンテンツになり、SEO上のカニバリゼーションが発生する。
+
+```bash
+# リモート（local: false）の場合
+scp /tmp/{slug}_body.html {connection}:/tmp/{slug}_body.html
+ssh {connection} << 'EOF'
+cd {wp_path}
+wp post update {EXISTING_POST_ID} \
+  --post_title="記事タイトル" \
+  --post_content="$(cat /tmp/{slug}_body.html)" \
+  --post_status=publish \
+  --post_author=1
+EOF
+```
+
+リライト完了後は旧下書き記事の削除・リダイレクト設定は行わない（呼び出し元が判断する）。
 
 ### 4. サムネイル生成・アイキャッチ設定
 

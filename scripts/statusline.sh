@@ -18,7 +18,7 @@ five_reset=$(echo "$input" | $JQ -r '.rate_limits.five_hour.resets_at // empty')
 seven_pct=$(echo "$input" | $JQ -r '.rate_limits.seven_day.used_percentage // empty')
 seven_reset=$(echo "$input" | $JQ -r '.rate_limits.seven_day.resets_at // empty')
 
-cols=$(tput cols 2>/dev/null || echo 80)
+cols=${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}
 MARGIN=28
 
 make_bar() {

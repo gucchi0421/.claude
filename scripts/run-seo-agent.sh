@@ -20,10 +20,17 @@ echo "=== $(date '+%Y-%m-%d %H:%M:%S') 開始 [task: $TASK] ===" >> "$SCHEDULE_L
 
 case "$TASK" in
   rewrite)
-    PROMPT="下書き記事を1本リライトして公開してほしいのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。【役割分担】記事の執筆・リライトは必ずwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    PROMPT="既存記事を1本選んでリライトし、同じIDに上書き公開してほしいのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。【リライト対象の選び方】以下のいずれかから優先度の高い1本を選ぶこと。①下書き（draft）状態の古いコラム記事（wp post list --post_type=column --post_status=draft）②公開中（publish）だが投稿日が古い記事・または内容のアップデートが激しいテーマ（Web制作トレンド・SEO・AI・法律・料金相場など）は数か月でも対象になる（wp post list --post_type=column --post_status=publish --orderby=date --order=ASC）。【絶対ルール】リライト後は必ず元の記事ID（EXISTING_POST_ID）に wp post update で上書きすること。wp post create で新規投稿するのは絶対に禁止。URLが変わると被リンク・検索順位がゼロリセットされる。wp-operatorに渡すときは EXISTING_POST_ID={対象のWP投稿ID} を必ず明示すること。また元記事の投稿日（post_date）が5年以上前の場合は、wp post update で本文を更新するときに --post_date=\"先月のランダムな日付（YYYY-MM-DD HH:MM:SS形式）\" も合わせて指定して投稿日を更新すること。日付は先月1日〜末日の範囲でランダムに散らすこと。【役割分担】記事の執筆・リライトは必ずwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
     ;;
   new-article)
-    PROMPT="GSCデータを分析して完全新規の記事を1本執筆・公開してほしいのだ。既存の下書きや投稿を流用・更新するのは禁止なのだ。必ず新しい投稿IDで wp post create から始めること。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。【役割分担】記事の執筆はwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
+    PROMPT="GSCデータとGA4データを分析して完全新規の記事を1本執筆・公開してほしいのだ。既存の下書きや投稿を流用・更新するのは禁止なのだ。必ず新しい投稿IDで wp post create から始めること。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。
+
+【重複チェック（必須・最優先）】キーワードを選定する前に、必ず ${PROJECT_DIR}/.claude/data/article-index.json を読み込んで既存記事の全タイトルとkeywordsを把握すること。このJSONがサイトの正の記事一覧であり、GSC・GA4に反映されていない最新の新規記事も含まれている。以下の条件に該当するキーワードは選定禁止：
+①選定しようとしているメインキーワード（例：「ホームページ制作 大阪 費用」）が既存記事のkeywordsフィールドに含まれている
+②選定しようとしている記事のタイトルと既存記事のタイトルが主題レベルで被っている
+重複が疑われる場合は必ずキーワードを変えて再選定すること。article-index.json に存在しないテーマ・切り口・ロングテールを選ぶこと。
+
+【役割分担】記事の執筆はwriterエージェントが担当する。wp-operatorはWP投稿のみ担当し、記事本文を自分で書かない。writerエージェントには必ず ARTICLES_DIR=${PROJECT_DIR}/.claude/articles を渡すこと。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
     ;;
   seo)
     PROMPT="GSCクイックウィン分析してタイトル・ディスクリプション・AIOSEOを改善してほしいのだ。サイトのグローバル設定、記事ごとのAIOSEO設定も範囲内なのだ。.claude/logs/schedule/index.mdを読んで前回の引き継ぎを確認してから進めてほしいのだ。完了後は/schedule-agent-summaryでログを残してほしいのだ。"
@@ -51,7 +58,7 @@ echo $$ > "$PID_FILE"
 ) &
 HEARTBEAT_PID=$!
 
-/home/k-taniguchi/.local/bin/claude --dangerously-skip-permissions --permission-mode bypassPermissions -p "$PROMPT" >> "$SCHEDULE_LOG_FILE" 2>&1
+printf '%s' "$PROMPT" | /home/k-taniguchi/.local/bin/claude --dangerously-skip-permissions --permission-mode bypassPermissions -p >> "$SCHEDULE_LOG_FILE" 2>&1
 
 kill "$HEARTBEAT_PID" 2>/dev/null
 rm -f "$PID_FILE"
