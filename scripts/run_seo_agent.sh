@@ -2,7 +2,7 @@
 # 引数1: rewrite（下書きリライト）/ new-article（新規記事）/ seo（SEO改善）/ pdca（構造改善）/ patrol（記事パトロール・自動修正）/ link（内部リンク巡回）
 # 引数2: PROJECT_DIR（プロジェクトの絶対パス）
 TASK="${1:-rewrite}"
-PROJECT_DIR="${2:?PROJECT_DIR が指定されていません。例: bash run-seo-agent.sh rewrite /home/k-taniguchi/documents/claude/e-webseisaku.com}"
+PROJECT_DIR="${2:?PROJECT_DIR が指定されていません。例: bash run_seo_agent.sh rewrite /home/k-taniguchi/documents/claude/e-webseisaku.com}"
 
 TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
 export SCHEDULE_LOG_FILE="$PROJECT_DIR/.claude/logs/schedule/${TIMESTAMP}_${TASK}.md"

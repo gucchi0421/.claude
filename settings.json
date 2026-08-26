@@ -48,8 +48,12 @@
       "Read(**/*.env)",
       "Read(**/*.pem)",
       "Read(**/*secret*)",
+      "Read(**/.aws/**)",
       "Edit(**/.env)",
       "Edit(**/.env.*)",
+      "Edit(**/*.pem)",
+      "Edit(**/*secret*)",
+      "Edit(**/.aws/**)",
       "Edit(/.github/workflows/**)",
       "Bash(git push -f *)",
       "Bash(git push --force *)",
@@ -64,9 +68,9 @@
       "Bash(npm publish*)",
       "Bash(wrangler pages deploy*)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   },
-  "model": "claude-sonnet-4-6",
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -97,24 +101,6 @@
             "command": "python3 ~/.claude/scripts/log_work.py"
           }
         ]
-      },
-      {
-        "matcher": "Bash(claude plugin install*)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/scripts/add_plugin.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash(claude mcp add*)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/scripts/add_mcp.py"
-          }
-        ]
       }
     ],
     "UserPromptSubmit": [
@@ -123,24 +109,6 @@
           {
             "type": "command",
             "command": "bash ~/.claude/scripts/project_init.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/scripts/notify_nvim_mascot.sh show"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/scripts/notify_nvim_mascot.sh hide"
           }
         ]
       }
@@ -191,6 +159,7 @@
   "alwaysThinkingEnabled": false,
   "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
   "showTurnDuration": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,

@@ -260,10 +260,10 @@ mkdir -p {PROJECT_DIR}/.claude/articles
 現在のcrontabを表示して確認後、以下を追記：
 
 ```
-10 * * * * bash ~/.claude/scripts/run-seo-agent.sh rewrite {PROJECT_DIR}
-20 * * * * bash ~/.claude/scripts/run-seo-agent.sh new-article {PROJECT_DIR}
-30 * * * * bash ~/.claude/scripts/run-seo-agent.sh seo {PROJECT_DIR}
-40 * * * * bash ~/.claude/scripts/run-seo-agent.sh pdca {PROJECT_DIR}
+10 * * * * bash ~/.claude/scripts/run_seo_agent.sh rewrite {PROJECT_DIR}
+20 * * * * bash ~/.claude/scripts/run_seo_agent.sh new-article {PROJECT_DIR}
+30 * * * * bash ~/.claude/scripts/run_seo_agent.sh seo {PROJECT_DIR}
+40 * * * * bash ~/.claude/scripts/run_seo_agent.sh pdca {PROJECT_DIR}
 ```
 
 ---
