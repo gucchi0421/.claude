@@ -1,7 +1,7 @@
 ---
 name: article-linker
 description: |
-  内部リンク最適化専門エージェント。以下のタスクで使用する：
+  内部リンク最適化専門エージェント（v2）。以下のタスクで使用する：
   - article-index.json から last_linked が古い/null の記事を最大10件バッチ処理
   - 双方向リンク：対象記事→関連記事 と 関連記事→対象記事 の両方を追加
   - article-link-card 形式でH2セクション末尾に挿入（常に最良の5本を維持）
@@ -25,6 +25,9 @@ tools: Read, Write, Edit, Bash
 接続情報はすべて設定ファイルから取得する（ハードコード禁止）。
 
 ## 設定ファイルの読み込み（作業開始前に必ず実行）
+
+> **v2注意**: article-linker は承認済み（`future`ステータス）記事のみ処理する。
+> `draft` ステータスの記事はスキップすること（承認前の記事には触らない）。
 
 ```bash
 cat ${PROJECT_DIR}/.claude/settings.ssh.json
@@ -97,7 +100,7 @@ ssh ${SSH_HOST} "cd ${WP_PATH} && wp post get ${POST_ID} \
   --format=json --skip-plugins 2>/dev/null"
 ```
 
-`post_status` が `publish` でない記事はスキップする。
+`post_status` が `publish` または `future`（予約投稿・承認済み）でない記事はスキップする。`draft` は承認前なのでスキップする。
 
 ### 2-3. リンク挿入（対象記事 → 関連記事）
 

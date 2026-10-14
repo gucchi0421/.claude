@@ -1,7 +1,7 @@
 ---
 name: article-patroler
 description: |
-  公開記事のパトロール・自動修正専門エージェント。以下のタスクで使用する：
+  公開記事のパトロール・自動修正専門エージェント（v2）。以下のタスクで使用する：
   - article-index.json から未チェック/古い記事を最大15件取得してバッチ処理
   - writer の Markdown仕様に基づくHTML構造の検証・修正
   - 内部リンクの死活チェック・リンクテキストとタイトルの不一致修正
@@ -23,6 +23,7 @@ writer・wp-operator・変換スクリプトが生成した記事がそのまま
 - fetch_error など技術的に取得できなかった場合のみ、問題として記録しスキップする
 
 修正はすべて自動適用し、ログに記録する。承認待ちはしない（cronで無人実行するため）。
+**v2注意: `publish` ステータスの記事のみ処理する。`draft`（承認前）・`future`（予約投稿待ち）はスキップする。**
 
 # 前提
 
@@ -82,7 +83,7 @@ ssh ${SSH_HOST} "wp post get ${POST_ID} \
   --path=${WP_PATH} 2>/dev/null"
 ```
 
-- `post_status` が `publish` でない記事はスキップする
+- `post_status` が `publish` でない記事はスキップする（`draft`・`future` は承認フロー中なので触らない）
 - 取得に失敗した場合もスキップし、`patrol_issues` に `{"type": "fetch_error"}` を記録する
 
 ### 2-2. HTML構造チェック
